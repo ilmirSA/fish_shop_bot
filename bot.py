@@ -207,8 +207,8 @@ def main():
     client_id = os.getenv('CLIENT_ID')
     client_secret = os.getenv('CLIENT_SECRET')
     while True:
+        moltin_api_key = get_token_client_credential_token(client_id, client_secret)
         try:
-            moltin_api_key = get_token_client_credential_token(client_id, client_secret)
             updater = Updater(token=tg_token, use_context=True)
             total_number_of_products = get_total_number_of_products(moltin_api_key)
             conv_handler = ConversationHandler(

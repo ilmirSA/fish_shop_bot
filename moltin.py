@@ -102,7 +102,7 @@ def get_token_client_credential_token(client_id, client_secret):
 
     response = requests.post('https://api.moltin.com/oauth/access_token', data=data)
     response.raise_for_status()
-    decode_response=response.json
+    decode_response=response.json()
     return decode_response['access_token']
 
 
