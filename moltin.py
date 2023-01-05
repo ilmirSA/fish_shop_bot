@@ -1,5 +1,4 @@
 import requests
-from dotenv import load_dotenv
 
 
 def get_total_number_of_products(api_token):
@@ -75,8 +74,7 @@ def remove_cart_item(token, poduct_id):
     response = requests.delete(f'https://api.moltin.com/v2/carts/korzinka/items/{poduct_id}',
 
                                headers=headers)
-
-
+    response.raise_for_status()
 
 def create_cart(api):
     ''' Создает корзину'''
@@ -92,19 +90,20 @@ def create_cart(api):
         },
     }
     response = requests.post('https://api.moltin.com/v2/carts', headers=headers, json=body)
+    response.raise_for_status()
 
-
-
-def get_token_client_credential_token():
+def get_token_client_credential_token(client_id, client_secret):
     ''' функция для получения API токена '''
     data = {
-        'client_id': '4mxJCYs8TpHP19WdqaUBaOsy5BPdhOkrEr9LVjki1S',
-        'client_secret': 'HjRWvMI8kKBJ5ikxY4BwuxALXxHtvYEZrUrbRzvE7J',
+        'client_id': f'{client_id}',
+        'client_secret': f'{client_secret}',
         'grant_type': 'client_credentials',
     }
 
-    response = requests.post('https://api.moltin.com/oauth/access_token', data=data).json()
-    print(response['access_token'])
+    response = requests.post('https://api.moltin.com/oauth/access_token', data=data)
+    response.raise_for_status()
+    decode_response=response.json
+    return decode_response['access_token']
 
 
 def get_cutomers(api):
@@ -114,9 +113,10 @@ def get_cutomers(api):
 
     }
 
-    response = requests.get('https://api.moltin.com/v2/customers', headers=headers).json()
-
-    return response['data'][0]['id']
+    response = requests.get('https://api.moltin.com/v2/customers', headers=headers)
+    decode_response=response.json
+    response.raise_for_status
+    return decode_response['data'][0]['id']
 
 
 def customers_token(api):
@@ -137,8 +137,7 @@ def customers_token(api):
     }
 
     response = requests.post('https://api.moltin.com/v2/customers/tokens', headers=headers, json=json_data)
-
-
+    response.raise_for_status
 
 def get_product_info(token, product_id):
     ''' Информация о продукте '''
@@ -185,7 +184,7 @@ def create_customers(token, firstname, lastname, email):
     }
 
     response = requests.post('https://api.moltin.com/v2/customers', headers=headers, json=json_data)
-
+    response.raise_for_status
 
 def get_amount(token):
     ''' возвращает общую сумму коризны'''
@@ -197,12 +196,3 @@ def get_amount(token):
     response.raise_for_status
     decode_response = response.json()
     return decode_response['data']['meta']['display_price']['with_tax']['formatted']
-
-
-def main():
-    load_dotenv()
-    print(get_token_client_credential_token())
-
-
-if __name__ == '__main__':
-    main()

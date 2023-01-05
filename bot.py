@@ -1,4 +1,5 @@
 import os
+import time
 from enum import Enum, auto
 from functools import partial
 
@@ -9,7 +10,7 @@ from telegram.ext import Updater, CommandHandler, ConversationHandler, CallbackQ
 from validate_email import validate_email
 
 from moltin import get_product_info, get_file_info, get_cart_items, remove_cart_item, add_product_to_cart, \
-    get_item_id_in_cart, get_total_number_of_products, create_customers
+    get_item_id_in_cart, get_total_number_of_products, create_customers, get_token_client_credential_token
 
 
 class Handlers(Enum):
@@ -202,43 +203,52 @@ def cancel(update, context):
 
 def main():
     load_dotenv()
-    tg_token = os.getenv("TG_TOKEN")
-    moltin_api_key = os.getenv('MOLTIN_API_KEY')
-    updater = Updater(token=tg_token, use_context=True)
-    total_number_of_products = get_total_number_of_products(moltin_api_key)
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', partial(start, total_number_of_products))],
+    tg_token = os.getenv('TG_TOKEN')
+    client_id = os.getenv('CLIENT_ID')
+    client_secret = os.getenv('CLIENT_SECRET')
+    while True:
+        try:
+            moltin_api_key = get_token_client_credential_token(client_id, client_secret)
+            updater = Updater(token=tg_token, use_context=True)
+            total_number_of_products = get_total_number_of_products(moltin_api_key)
+            conv_handler = ConversationHandler(
+                entry_points=[CommandHandler('start', partial(start, total_number_of_products))],
 
-        states={
+                states={
 
-            Handlers.HANDLE_DESCRIPTION: [
-                CallbackQueryHandler(partial(next_list, moltin_api_key), pattern='^' + 'Вперед' + '$'),
-                CallbackQueryHandler(partial(first_page_of_products, moltin_api_key), pattern='^' + 'Назад' + '$'),
-                CallbackQueryHandler(partial(show_bucket, moltin_api_key, ), pattern='^' + 'Корзина' + '$'),
-                CallbackQueryHandler(partial(show_products, moltin_api_key)),
+                    Handlers.HANDLE_DESCRIPTION: [
+                        CallbackQueryHandler(partial(next_list, moltin_api_key), pattern='^' + 'Вперед' + '$'),
+                        CallbackQueryHandler(partial(first_page_of_products, moltin_api_key),
+                                             pattern='^' + 'Назад' + '$'),
+                        CallbackQueryHandler(partial(show_bucket, moltin_api_key, ), pattern='^' + 'Корзина' + '$'),
+                        CallbackQueryHandler(partial(show_products, moltin_api_key)),
 
-            ],
-            Handlers.HANDLE_CART: [
-                CallbackQueryHandler(partial(first_page_of_products, moltin_api_key), pattern='^' + 'Назад' + '$'),
-                CallbackQueryHandler(partial(show_bucket, moltin_api_key, ), pattern='^' + 'Корзина' + '$'),
-                CallbackQueryHandler(partial(add_to_basket, moltin_api_key, )),
-            ],
-            Handlers.HANDLE_BACKET: [
-                CallbackQueryHandler(partial(first_page_of_products, moltin_api_key), pattern='^' + 'В меню' + '$'),
-                CallbackQueryHandler(get_email, pattern='^' + 'Оплатить' + '$'),
-                CallbackQueryHandler(partial(remove_item_in_cart, moltin_api_key)),
+                    ],
+                    Handlers.HANDLE_CART: [
+                        CallbackQueryHandler(partial(first_page_of_products, moltin_api_key),
+                                             pattern='^' + 'Назад' + '$'),
+                        CallbackQueryHandler(partial(show_bucket, moltin_api_key, ), pattern='^' + 'Корзина' + '$'),
+                        CallbackQueryHandler(partial(add_to_basket, moltin_api_key, )),
+                    ],
+                    Handlers.HANDLE_BACKET: [
+                        CallbackQueryHandler(partial(first_page_of_products, moltin_api_key),
+                                             pattern='^' + 'В меню' + '$'),
+                        CallbackQueryHandler(get_email, pattern='^' + 'Оплатить' + '$'),
+                        CallbackQueryHandler(partial(remove_item_in_cart, moltin_api_key)),
 
-            ],
-            Handlers.WAITING_mail: [
-                MessageHandler(Filters.text, partial(wait_email, moltin_api_key))
-            ]
-        },
-        fallbacks=[CommandHandler('cancel', cancel)]
-    )
-    updater.dispatcher.add_handler(conv_handler)
+                    ],
+                    Handlers.WAITING_mail: [
+                        MessageHandler(Filters.text, partial(wait_email, moltin_api_key))
+                    ]
+                },
+                fallbacks=[CommandHandler('cancel', cancel)]
+            )
+            updater.dispatcher.add_handler(conv_handler)
 
-    updater.start_polling()
-    updater.idle()
+            updater.start_polling()
+            updater.idle()
+        except:
+            print("Токен устарел")
 
 
 if __name__ == '__main__':
