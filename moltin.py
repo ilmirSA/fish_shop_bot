@@ -196,3 +196,5 @@ def get_amount(token):
     response.raise_for_status
     decode_response = response.json()
     return decode_response['data']['meta']['display_price']['with_tax']['formatted']
+
+print()

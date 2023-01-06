@@ -1,7 +1,7 @@
 import os
-import time
 from enum import Enum, auto
 from functools import partial
+from threading import Timer
 
 from dotenv import load_dotenv
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
@@ -201,14 +201,18 @@ def cancel(update, context):
     return ConversationHandler.END
 
 
+def token_updater(client_id, client_secret):
+    Timer(3500, token_updater, args=(client_id, client_secret)).start()
+    return get_token_client_credential_token(client_id, client_secret)
+
+
 def main():
     load_dotenv()
-    tg_token = os.getenv('TG_TOKEN')
+
     client_id = os.getenv('CLIENT_ID')
     client_secret = os.getenv('CLIENT_SECRET')
-
-    moltin_api_key = get_token_client_credential_token(client_id, client_secret)
-
+    tg_token = os.getenv('TG_TOKEN')
+    moltin_api_key = token_updater(client_id, client_secret)
     updater = Updater(token=tg_token, use_context=True)
     total_number_of_products = get_total_number_of_products(moltin_api_key)
     conv_handler = ConversationHandler(
