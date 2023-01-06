@@ -212,7 +212,8 @@ def main():
     client_id = os.getenv('CLIENT_ID')
     client_secret = os.getenv('CLIENT_SECRET')
     tg_token = os.getenv('TG_TOKEN')
-    moltin_api_key = token_updater(client_id, client_secret)
+    moltin_api_key = f'Bearer {token_updater(client_id, client_secret)}'
+    print(moltin_api_key)
     updater = Updater(token=tg_token, use_context=True)
     total_number_of_products = get_total_number_of_products(moltin_api_key)
     conv_handler = ConversationHandler(
