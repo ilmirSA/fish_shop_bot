@@ -51,9 +51,10 @@ def first_page_of_products(moltin_token, update, context):
                 ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
+    query.delete_message()
     context.bot.send_message(
-        chat_id=update['callback_query']['from_user']['id'],
-        text='Выберите товар',
+        chat_id=query.from_user.id,
+        text='Выбирите товар',
         reply_markup=reply_markup,
     )
 
@@ -75,15 +76,13 @@ def second_page(moltin_token, update, context):
                 ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-
-    context.bot.delete_message(chat_id=query.message.chat_id,
-                               message_id=query.message.message_id, )
-
+    query.delete_message()
     context.bot.send_message(
-        chat_id=update['callback_query']['from_user']['id'],
+        chat_id=query.from_user.id,
         text='Выбирите товар',
         reply_markup=reply_markup,
     )
+
     return Handlers.HANDLE_DESCRIPTION
 
 
@@ -110,9 +109,9 @@ def show_products(moltin_token, update, context):
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
+    query.delete_message()
     context.bot.send_photo(chat_id=query.message.chat_id, photo=file_url, caption=text, reply_markup=reply_markup,
                            parse_mode=ParseMode.MARKDOWN_V2)
-    query.delete_message()
 
     return Handlers.HANDLE_CART
 
@@ -135,8 +134,8 @@ def show_bucket(moltin_token, update, context):
     reply_markup = InlineKeyboardMarkup(keyboard)
     cart_items = get_cart_items(moltin_token.token)
     text = ''.join(cart_items),
-    
 
+    query.delete_message()
     context.bot.send_message(
         chat_id=query.from_user.id,
         text=''.join(cart_items),
