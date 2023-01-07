@@ -86,7 +86,7 @@ def second_page(moltin_token, update, context):
     context.bot.delete_message(chat_id=query.message.chat_id,
                                message_id=query.message.message_id, )
     context.bot.send_message(
-        chat_id=update.effective_chat.id,
+        chat_id=update.callback_query.from_user.id,
         text='Выбирите товар',
         reply_markup=reply_markup,
     )
@@ -123,7 +123,7 @@ def show_bucket(moltin_token, update, context):
     context.bot.delete_message(chat_id=query.message.chat_id,
                                message_id=query.message.message_id, )
     context.bot.send_message(
-        chat_id=update.effective_chat.id,
+        chat_id=update.callback_query.from_user.id,
         text=''.join(cart_items),
         reply_markup=reply_markup,
     )
@@ -159,7 +159,7 @@ def first_page_of_products(moltin_token, update, context):
     context.bot.delete_message(chat_id=query.message.chat_id,
                                message_id=query.message.message_id, )
     context.bot.send_message(
-        chat_id=update.effective_chat.id,
+        chat_id=query.from_user.id,
         text='Выберите товар',
         reply_markup=reply_markup,
     )
@@ -189,7 +189,7 @@ def get_email(update, context):
     query = update.callback_query
     query.answer()
     context.bot.send_message(
-        chat_id=update.effective_chat.id,
+        chat_id=query.from_user.id,
         text='Введите свою электронную почту'
     )
     return Handlers.WAITING_mail
