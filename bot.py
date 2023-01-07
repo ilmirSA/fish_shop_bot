@@ -83,8 +83,9 @@ def second_page(moltin_token, update, context):
                 ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    context.bot.delete_message(chat_id=query.message.chat_id,
-                               message_id=query.message.message_id, )
+    # context.bot.delete_message(chat_id=query.message.chat_id,
+    #                            message_id=query.message.message_id, )
+    query.delete_message()
     context.bot.send_message(
         chat_id=update.callback_query.from_user.id,
         text='Выбирите товар',
@@ -120,8 +121,9 @@ def show_bucket(moltin_token, update, context):
                 ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     cart_items = get_cart_items(moltin_token.token)
-    context.bot.delete_message(chat_id=query.message.chat_id,
-                               message_id=query.message.message_id, )
+    query.delete_message()
+    # context.bot.delete_message(chat_id=query.message.chat_id,
+    #                            message_id=query.message.message_id, )
     context.bot.send_message(
         chat_id=update.callback_query.from_user.id,
         text=''.join(cart_items),
@@ -131,8 +133,7 @@ def show_bucket(moltin_token, update, context):
 
 
 def remove_item_in_cart(moltin_token, update, context):
-    h=context.bot.answer_callback_query(callback_query_id=update.callback_query.id, text='Продукт удален из корзины')
-    print(h)
+    context.bot.answer_callback_query(callback_query_id=update.callback_query.id, text='Продукт удален из корзины')
     query = update.callback_query
     product_id = query.data
     moltin_token.update_token()
@@ -156,13 +157,14 @@ def first_page_of_products(moltin_token, update, context):
                 ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    context.bot.delete_message(chat_id=query.message.chat_id,
-                               message_id=query.message.message_id, )
+    # context.bot.delete_message(chat_id=query.message.chat_id,
+    #                            message_id=query.message.message_id, )
     context.bot.send_message(
         chat_id=query.from_user.id,
         text='Выберите товар',
         reply_markup=reply_markup,
     )
+    query.delete_message()
     return Handlers.HANDLE_DESCRIPTION
 
 
