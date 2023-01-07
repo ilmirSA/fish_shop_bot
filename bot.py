@@ -140,7 +140,6 @@ def remove_item_in_cart(moltin_token, update, context):
 
 
 def first_page_of_products(moltin_token, update, context):
-    context.bot.answer_callback_query(callback_query_id=update.callback_query.id)
     query = update.callback_query
     moltin_token.update_token()
     total_number_of_products = get_total_number_of_products(moltin_token.token)
@@ -184,7 +183,6 @@ def start(total_number_of_products, update, context, ):
 
 
 def get_email(update, context):
-    context.bot.answer_callback_query(callback_query_id=update.callback_query.id)
     query = update.callback_query
     context.bot.send_message(
         chat_id=update.effective_chat.id,
