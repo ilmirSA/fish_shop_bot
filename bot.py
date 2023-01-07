@@ -38,6 +38,7 @@ class Handlers(Enum):
 
 
 def show_products(moltin_token, update, context):
+    context.bot.answer_callback_query(callback_query_id=update.callback_query.id)
     query = update.callback_query
     moltin_token.update_token()
     querydata = query.data
