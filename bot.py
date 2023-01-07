@@ -74,6 +74,8 @@ def next_list(moltin_token,update, context):
     moltin_token.update_token()
     print(moltin_token.token)
     query = update.callback_query
+    print(update.callback_query.message.chat_id)
+    print(update.callback_query.id)
     query.answer()
     total_number_of_products = get_total_number_of_products(moltin_token.token)
     keyboard = [[InlineKeyboardButton("Karp", callback_data='80ddddcf-74c1-432f-bf51-8d5c07106772'),
@@ -277,7 +279,7 @@ def main():
     )
     updater.dispatcher.add_handler(conv_handler)
 
-    updater.start_polling()
+    updater.start_polling(drop_pending_updates=True)
     updater.idle()
 
 
