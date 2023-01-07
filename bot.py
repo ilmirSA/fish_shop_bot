@@ -39,7 +39,6 @@ class Handlers(Enum):
 
 def show_products(moltin_token, update, context):
     query = update.callback_query
-
     moltin_token.update_token()
     querydata = query.data
     product_name, product_description, photo_id = get_product_info(moltin_token.token, query.data)
@@ -66,13 +65,12 @@ def show_products(moltin_token, update, context):
     context.bot.delete_message(chat_id=query.message.chat_id,
                                message_id=query.message.message_id,
                                )
-    query.answer()
     return Handlers.HANDLE_CART
 
 
 def next_list(moltin_token,update, context):
+    context.bot.answer_callback_query(callback_query_id=update.callback_query.id)
     query = update.callback_query
-
     moltin_token.update_token()
     total_number_of_products = get_total_number_of_products(moltin_token.token)
     keyboard = [[InlineKeyboardButton("Karp", callback_data='80ddddcf-74c1-432f-bf51-8d5c07106772'),
@@ -92,22 +90,22 @@ def next_list(moltin_token,update, context):
         text='Выбирите товар',
         reply_markup=reply_markup,
     )
-    query.answer()
     return Handlers.HANDLE_DESCRIPTION
 
 
 def add_to_basket(moltin_token, update, context):
+    context.bot.answer_callback_query(callback_query_id=update.callback_query.id,text='Товар добавлен в корзину')
     query = update.callback_query
     moltin_token.update_token()
     split_querydata = query.data.split(" ")
     product_id = split_querydata[1]
     amount = int(split_querydata[0])
     add_product_to_cart(moltin_token.token, product_id, amount)
-    query.answer(text='Товар добавлен в корзину')
+
 
 def show_bucket(moltin_token, update, context):
+    context.bot.answer_callback_query(callback_query_id=update.callback_query.id)
     query = update.callback_query
-
     moltin_token.update_token()
     keyboard = [[InlineKeyboardButton("Удалить Forel", callback_data='ed2b8fa9-5473-45a9-b52e-a1d718fa3002'),
                  InlineKeyboardButton("Удалить Gorbusha", callback_data='d7451b26-94ad-407b-bade-c2a1a970b79a')],
@@ -129,24 +127,23 @@ def show_bucket(moltin_token, update, context):
         text=''.join(cart_items),
         reply_markup=reply_markup,
     )
-    query.answer()
     return Handlers.HANDLE_BACKET
 
 
 def remove_item_in_cart(moltin_token, update, context):
+    context.bot.answer_callback_query(callback_query_id=update.callback_query.id,text='Продукт удален из корзины')
     query = update.callback_query
     product_id = query.data
-
     moltin_token.update_token()
     product_id_in_cart = get_item_id_in_cart(moltin_token.token, product_id)
     remove_cart_item(moltin_token.token, product_id_in_cart)
-    query.answer(text='Продукт удален из корзины')
     return show_bucket(moltin_token, update, context)
 
 
 def first_page_of_products(moltin_token, update, context):
-    query = update.callback_query
+    context.bot.answer_callback_query(callback_query_id=update.callback_query.id)
 
+    query = update.callback_query
     moltin_token.update_token()
     total_number_of_products = get_total_number_of_products(moltin_token.token)
     keyboard = [[InlineKeyboardButton("Forel", callback_data='ed2b8fa9-5473-45a9-b52e-a1d718fa3002'),
@@ -166,7 +163,6 @@ def first_page_of_products(moltin_token, update, context):
         text='Выберите товар',
         reply_markup=reply_markup,
     )
-    query.answer()
     return Handlers.HANDLE_DESCRIPTION
 
 
@@ -190,12 +186,12 @@ def start(total_number_of_products, update, context, ):
 
 
 def get_email(update, context):
+    context.bot.answer_callback_query(callback_query_id=update.callback_query.id)
     query = update.callback_query
     context.bot.send_message(
         chat_id=update.effective_chat.id,
         text='Введите свою электронную почту'
     )
-    query.answer()
     return Handlers.WAITING_mail
 
 
