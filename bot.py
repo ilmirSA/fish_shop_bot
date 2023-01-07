@@ -38,10 +38,9 @@ class Handlers(Enum):
 
 
 def show_products(moltin_token, update, context):
-    moltin_token.update_token()
-    print(moltin_token.token)
     query = update.callback_query
     query.answer()
+    moltin_token.update_token()
     querydata = query.data
     product_name, product_description, photo_id = get_product_info(moltin_token.token, query.data)
     file_url = get_file_info(moltin_token.token, photo_id)
@@ -64,19 +63,16 @@ def show_products(moltin_token, update, context):
     context.bot.send_photo(chat_id=query.message.chat_id, photo=file_url, caption=text, reply_markup=reply_markup,
                            parse_mode=ParseMode.MARKDOWN_V2)
 
-    context.bot.delete_message(chat_id=update.callback_query.message.chat_id,
-                               message_id=update.callback_query.message.message_id,
+    context.bot.delete_message(chat_id=query.message.chat_id,
+                               message_id=query.message.message_id,
                                )
     return Handlers.HANDLE_CART
 
 
 def next_list(moltin_token,update, context):
-    moltin_token.update_token()
-    print(moltin_token.token)
     query = update.callback_query
-    print(update.callback_query.message.chat_id)
-    print(update.callback_query.id)
     query.answer()
+    moltin_token.update_token()
     total_number_of_products = get_total_number_of_products(moltin_token.token)
     keyboard = [[InlineKeyboardButton("Karp", callback_data='80ddddcf-74c1-432f-bf51-8d5c07106772'),
                  InlineKeyboardButton("Osetr", callback_data='caa3541a-c23a-4bc2-a446-0657a1a30fe9')],
@@ -88,8 +84,8 @@ def next_list(moltin_token,update, context):
                 ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    context.bot.delete_message(chat_id=update.callback_query.message.chat_id,
-                               message_id=update.callback_query.message.message_id, )
+    context.bot.delete_message(chat_id=query.message.chat_id,
+                               message_id=query.message.message_id, )
     context.bot.send_message(
         chat_id=update.effective_chat.id,
         text='Выбирите товар',
@@ -99,10 +95,9 @@ def next_list(moltin_token,update, context):
 
 
 def add_to_basket(moltin_token, update, context):
-    moltin_token.update_token()
-    print(moltin_token.token)
     query = update.callback_query
     query.answer(text='Товар добавлен в корзину')
+    moltin_token.update_token()
     split_querydata = query.data.split(" ")
     product_id = split_querydata[1]
     amount = int(split_querydata[0])
@@ -110,10 +105,11 @@ def add_to_basket(moltin_token, update, context):
 
 
 def show_bucket(moltin_token, update, context):
-    moltin_token.update_token()
-    print(moltin_token.token)
+
+
     query = update.callback_query
     query.answer()
+    moltin_token.update_token()
     keyboard = [[InlineKeyboardButton("Удалить Forel", callback_data='ed2b8fa9-5473-45a9-b52e-a1d718fa3002'),
                  InlineKeyboardButton("Удалить Gorbusha", callback_data='d7451b26-94ad-407b-bade-c2a1a970b79a')],
                 [InlineKeyboardButton("Удалить Semga", callback_data='a8deb76c-0870-4156-8383-7c751abcf549'),
@@ -127,8 +123,8 @@ def show_bucket(moltin_token, update, context):
                 ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     cart_items = get_cart_items(moltin_token.token)
-    context.bot.delete_message(chat_id=update.callback_query.message.chat_id,
-                               message_id=update.callback_query.message.message_id, )
+    context.bot.delete_message(chat_id=query.message.chat_id,
+                               message_id=query.message.message_id, )
     context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=''.join(cart_items),
@@ -138,22 +134,20 @@ def show_bucket(moltin_token, update, context):
 
 
 def remove_item_in_cart(moltin_token, update, context):
-    moltin_token.update_token()
-    print(moltin_token.token)
     query = update.callback_query
     product_id = query.data
     query.answer(text='Продукт удален из корзины')
+    moltin_token.update_token()
     product_id_in_cart = get_item_id_in_cart(moltin_token.token, product_id)
     remove_cart_item(moltin_token.token, product_id_in_cart)
     return show_bucket(moltin_token, update, context)
 
 
 def first_page_of_products(moltin_token, update, context):
-    moltin_token.update_token()
-    print(moltin_token.token)
-    total_number_of_products = get_total_number_of_products(moltin_token.token)
     query = update.callback_query
     query.answer()
+    moltin_token.update_token()
+    total_number_of_products = get_total_number_of_products(moltin_token.token)
     keyboard = [[InlineKeyboardButton("Forel", callback_data='ed2b8fa9-5473-45a9-b52e-a1d718fa3002'),
                  InlineKeyboardButton("Gorbusha", callback_data='d7451b26-94ad-407b-bade-c2a1a970b79a')],
                 [InlineKeyboardButton("Semga", callback_data='a8deb76c-0870-4156-8383-7c751abcf549'),
@@ -164,8 +158,8 @@ def first_page_of_products(moltin_token, update, context):
                 ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    context.bot.delete_message(chat_id=update.callback_query.message.chat_id,
-                               message_id=update.callback_query.message.message_id, )
+    context.bot.delete_message(chat_id=query.message.chat_id,
+                               message_id=query.message.message_id, )
     context.bot.send_message(
         chat_id=update.effective_chat.id,
         text='Выберите товар',
@@ -205,7 +199,6 @@ def get_email(update, context):
 
 def wait_email(moltin_token, update, context):
     moltin_token.update_token()
-    print(moltin_token.token)
     keyboard = [InlineKeyboardButton("В меню", callback_data='Назад')],
     reply_markup = InlineKeyboardMarkup(keyboard)
     is_valid = validate_email(update.message.text)
