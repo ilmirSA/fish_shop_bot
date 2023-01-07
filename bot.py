@@ -39,8 +39,10 @@ class Handlers(Enum):
 
 def show_products(moltin_token, update, context):
     query = update.callback_query
+
     moltin_token.update_token()
     querydata = query.data
+    query.answer()
     product_name, product_description, photo_id = get_product_info(moltin_token.token, query.data)
     file_url = get_file_info(moltin_token.token, photo_id)
     text = f'''
@@ -70,6 +72,7 @@ def show_products(moltin_token, update, context):
 
 def second_page(moltin_token,update, context):
     query = update.callback_query
+    query.answer()
     moltin_token.update_token()
     total_number_of_products = get_total_number_of_products(moltin_token.token)
     keyboard = [[InlineKeyboardButton("Karp", callback_data='80ddddcf-74c1-432f-bf51-8d5c07106772'),
@@ -104,6 +107,7 @@ def add_to_basket(moltin_token, update, context):
 
 def show_bucket(moltin_token, update, context):
     query = update.callback_query
+    query.answer()
     moltin_token.update_token()
     keyboard = [[InlineKeyboardButton("Удалить Forel", callback_data='ed2b8fa9-5473-45a9-b52e-a1d718fa3002'),
                  InlineKeyboardButton("Удалить Gorbusha", callback_data='d7451b26-94ad-407b-bade-c2a1a970b79a')],
@@ -141,6 +145,7 @@ def remove_item_in_cart(moltin_token, update, context):
 
 def first_page_of_products(moltin_token, update, context):
     query = update.callback_query
+    query.answer()
     moltin_token.update_token()
     total_number_of_products = get_total_number_of_products(moltin_token.token)
     keyboard = [[InlineKeyboardButton("Forel", callback_data='ed2b8fa9-5473-45a9-b52e-a1d718fa3002'),
@@ -184,6 +189,7 @@ def start(total_number_of_products, update, context, ):
 
 def get_email(update, context):
     query = update.callback_query
+    query.answer()
     context.bot.send_message(
         chat_id=update.effective_chat.id,
         text='Введите свою электронную почту'
@@ -192,6 +198,8 @@ def get_email(update, context):
 
 
 def wait_email(moltin_token, update, context):
+    query = update.callback_query
+    query.answer()
     moltin_token.update_token()
     keyboard = [InlineKeyboardButton("В меню", callback_data='Назад')],
     reply_markup = InlineKeyboardMarkup(keyboard)
