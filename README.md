@@ -31,7 +31,7 @@ pythno -m venv venv
 ```python
 pip install -r requirements.txt
 ```
-Ссылка на [бота]('https://t.me/fishmagazinbot) 
+Ссылка на [бота](https://t.me/fishmagazinbot) 
 
 
 
