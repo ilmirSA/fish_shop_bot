@@ -33,7 +33,7 @@ pip install -r requirements.txt
 ```
 - Как запустить бота
 ```python
-python3 bot.py
+python bot.py
 ```
 Ссылка на [бота](https://t.me/fishmagazinbot) 
 
