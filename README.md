@@ -21,7 +21,7 @@ git clone https://github.com/ilmirSA/fish_shop_bot.git
 ```
 - Создайте виртуальное окружение 
 ```python
-pythno -m venv venv
+python -m venv venv
  ```
 - Активируйте виртуальное окружение следующей командой 
  ```python
@@ -30,6 +30,10 @@ pythno -m venv venv
 - Установите зависимости следующей командой 
 ```python
 pip install -r requirements.txt
+```
+- Как запустить бота
+```python
+python3 bot.py
 ```
 Ссылка на [бота](https://t.me/fishmagazinbot) 
 
