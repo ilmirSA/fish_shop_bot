@@ -11,8 +11,8 @@ def get_total_number_of_products(api_token, cart_name):
 
     response = requests.get(f'https://api.moltin.com/v2/carts/{cart_name}/items', headers=headers)
     response.raise_for_status()
-    products_in_the_cart = response.json()['data']
-    number_products_in_cart = len(products_in_the_cart)
+    cart_products = response.json()['data']
+    number_products_in_cart = len(cart_products)
     return number_products_in_cart
 
 
@@ -24,12 +24,12 @@ def get_cart_items(api_token, cart_name):
 
     response = requests.get(f'https://api.moltin.com/v2/carts/{cart_name}/items', headers=headers)
     response.raise_for_status()
-    products_in_the_cart = response.json()['data']
+    cart_products = response.json()['data']
     text = [f'''\
             {product['name']}
             {product['description']}
             '''
-            for product in products_in_the_cart]
+            for product in cart_products]
 
     text.append(get_amount(api_token, cart_name))
 
@@ -115,7 +115,7 @@ def get_token_client_credential_token(client_id, client_secret):
 
     response = requests.post('https://api.moltin.com/oauth/access_token', data=data)
     response.raise_for_status()
-    access_token = decode_response = response.json()['access_token']
+    access_token = response.json()['access_token']
     return access_token
 
 
