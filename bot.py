@@ -10,7 +10,8 @@ from validate_email import validate_email
 
 from keyboard_generator import get_keyboard, get_keyboard_delete_products
 from moltin import get_product_info, get_file_info, get_cart_items, remove_cart_item, add_product_to_cart, \
-    get_item_id_in_cart, create_customers, get_token_client_credential_token
+    get_item_id_in_cart, create_customers, get_token_client_credential_token, get_total_number_of_products, \
+    get_all_products
 
 
 class Handlers(Enum):
@@ -29,7 +30,9 @@ def first_page_of_products(update, context):
     query.answer()
 
     button_name = "Назад" if query.data == 'Вперед' else "Вперед"
-    keyboard = get_keyboard(moltin_token, cart_name, button_name)
+    total_number_of_products = get_total_number_of_products(moltin_token, cart_name)
+    products = get_all_products(moltin_token)
+    keyboard = get_keyboard(total_number_of_products, products, button_name)
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -80,8 +83,8 @@ def show_bucket(update, context):
     moltin_token = context.bot_data['moltin_token']
     cart_name = query.from_user.id
     query.answer()
-
-    keyboard = get_keyboard_delete_products(moltin_token)
+    products = get_all_products(moltin_token)
+    keyboard = get_keyboard_delete_products(products)
     reply_markup = InlineKeyboardMarkup(keyboard)
     text = get_cart_items(moltin_token, cart_name)
 
@@ -180,7 +183,9 @@ def start(update, context):
     moltin_token = context.bot_data['moltin_token']
 
     cart_name = update.message.from_user.id
-    keyboard = get_keyboard(moltin_token, cart_name, 'Вперед')
+    total_number_of_products = get_total_number_of_products(moltin_token, cart_name)
+    products = get_all_products(moltin_token)
+    keyboard = get_keyboard(total_number_of_products, products, 'Вперед')
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     context.bot.send_message(

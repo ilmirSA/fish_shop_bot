@@ -1,7 +1,5 @@
 from telegram import InlineKeyboardButton
 
-from moltin import get_all_products, get_total_number_of_products
-
 
 def build_menu(buttons, n_cols,
                header_buttons=None,
@@ -14,9 +12,7 @@ def build_menu(buttons, n_cols,
     return menu
 
 
-def get_keyboard_delete_products(moltin_token, ):
-    products = get_all_products(moltin_token)
-
+def get_keyboard_delete_products(products):
     inline_buttons = [InlineKeyboardButton(f"Удалить {button.get('name')}", callback_data=button.get('id')) for button
                       in
                       products]
@@ -39,15 +35,13 @@ def create_inline_buttons(start, end, total_number_of_products, button_name, pro
     return inline_buttons
 
 
-def get_keyboard(moltin_token, cart_name, button_name):
-    total_number_of_products = get_total_number_of_products(moltin_token, cart_name)
-    products = get_all_products(moltin_token)
+def get_keyboard(total_number_of_products, products, button_name):
     left = 0
     middle = round(len(products) / 2)
     right = len(products)
     if button_name == 'Назад':
-        inline_buttons = create_inline_buttons(middle,right,total_number_of_products,button_name,products)
+        inline_buttons = create_inline_buttons(middle, right, total_number_of_products, button_name, products)
         return build_menu(inline_buttons, 1)
     elif button_name == 'Вперед':
-        inline_buttons = create_inline_buttons(left,middle,total_number_of_products,button_name,products)
+        inline_buttons = create_inline_buttons(left, middle, total_number_of_products, button_name, products)
         return build_menu(inline_buttons, 1)
