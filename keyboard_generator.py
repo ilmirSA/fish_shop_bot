@@ -15,11 +15,11 @@ def build_menu(buttons, n_cols,
 
 
 def get_keyboard_delete_products(moltin_token, ):
-    buttons = get_all_products(moltin_token)
+    products = get_all_products(moltin_token)
 
     inline_buttons = [InlineKeyboardButton(f"Удалить {button.get('name')}", callback_data=button.get('id')) for button
                       in
-                      buttons]
+                      products]
 
     pay_button = InlineKeyboardButton("Оплатить", callback_data='Оплатить')
     back_button = InlineKeyboardButton("Назад", callback_data='Назад')
@@ -28,29 +28,26 @@ def get_keyboard_delete_products(moltin_token, ):
     return build_menu(inline_buttons, 1)
 
 
+def create_inline_buttons(start, end, total_number_of_products, button_name, products):
+    inline_buttons = [InlineKeyboardButton(button.get('name'), callback_data=button.get('id')) for button in
+                      products[start:end]]
+    bucket_button = InlineKeyboardButton(f"Корзина.Кол-во продуктов в корзине {total_number_of_products}",
+                                         callback_data='Корзина')
+    back_button = InlineKeyboardButton(button_name, callback_data=button_name)
+    inline_buttons.append(bucket_button)
+    inline_buttons.append(back_button)
+    return inline_buttons
+
+
 def get_keyboard(moltin_token, cart_name, button_name):
     total_number_of_products = get_total_number_of_products(moltin_token, cart_name)
-    buttons = get_all_products(moltin_token)
+    products = get_all_products(moltin_token)
     left = 0
-    middle = round(len(buttons) / 2)
-    right = len(buttons)
-
+    middle = round(len(products) / 2)
+    right = len(products)
     if button_name == 'Назад':
-        inline_buttons = [InlineKeyboardButton(button.get('name'), callback_data=button.get('id')) for button in
-                          buttons[middle:right]]
-        bucket_button = InlineKeyboardButton(f"Корзина.Кол-во продуктов в корзине {total_number_of_products}",
-                                             callback_data='Корзина')
-        back_button = InlineKeyboardButton("Назад", callback_data=button_name)
-        inline_buttons.append(bucket_button)
-        inline_buttons.append(back_button)
+        inline_buttons = create_inline_buttons(middle,right,total_number_of_products,button_name,products)
         return build_menu(inline_buttons, 1)
-
-    if button_name == 'Вперед':
-        inline_buttons = [InlineKeyboardButton(button.get('name'), callback_data=button.get('id')) for button in
-                          buttons[left:middle]]
-        bucket_button = InlineKeyboardButton(f"Корзина.Кол-во продуктов в корзине {total_number_of_products}",
-                                             callback_data='Корзина')
-        next_button = InlineKeyboardButton("Вперед", callback_data=button_name)
-        inline_buttons.append(bucket_button)
-        inline_buttons.append(next_button)
+    elif button_name == 'Вперед':
+        inline_buttons = create_inline_buttons(left,middle,total_number_of_products,button_name,products)
         return build_menu(inline_buttons, 1)

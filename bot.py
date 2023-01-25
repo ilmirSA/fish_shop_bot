@@ -21,9 +21,9 @@ class Handlers(Enum):
 
 
 def first_page_of_products(update, context):
-    context.bot_data['moltin_token'] = token_checker(context.bot_data)
+    context.bot_data['moltin_token'] = update_token(context.bot_data)
     moltin_token = context.bot_data['moltin_token']
-    token_checker(context.bot_data)
+    update_token(context.bot_data)
     query = update.callback_query
     cart_name = query.from_user.id
     query.answer()
@@ -43,7 +43,7 @@ def first_page_of_products(update, context):
 
 
 def show_products(update, context):
-    context.bot_data['moltin_token'] = token_checker(context.bot_data)
+    context.bot_data['moltin_token'] = update_token(context.bot_data)
     query = update.callback_query
     moltin_token = context.bot_data['moltin_token']
     query_data = query.data
@@ -75,7 +75,7 @@ def show_products(update, context):
 
 
 def show_bucket(update, context):
-    context.bot_data['moltin_token'] = token_checker(context.bot_data)
+    context.bot_data['moltin_token'] = update_token(context.bot_data)
     query = update.callback_query
     moltin_token = context.bot_data['moltin_token']
     cart_name = query.from_user.id
@@ -95,7 +95,7 @@ def show_bucket(update, context):
 
 
 def add_to_basket(update, context):
-    context.bot_data['moltin_token'] = token_checker(context.bot_data)
+    context.bot_data['moltin_token'] = update_token(context.bot_data)
     query = update.callback_query
     moltin_token = context.bot_data['moltin_token']
     cart_name = query.from_user.id
@@ -109,7 +109,7 @@ def add_to_basket(update, context):
 
 
 def remove_item_in_cart(update, context):
-    context.bot_data['moltin_token'] = token_checker(context.bot_data)
+    context.bot_data['moltin_token'] = update_token(context.bot_data)
     query = update.callback_query
     moltin_token = context.bot_data['moltin_token']
     cart_name = query.from_user.id
@@ -136,7 +136,7 @@ def get_email(update, context):
 
 
 def wait_email(update, context):
-    context.bot_data['moltin_token'] = token_checker(context.bot_data)
+    context.bot_data['moltin_token'] = update_token(context.bot_data)
     moltin_token = context.bot_data['moltin_token']
     keyboard = [InlineKeyboardButton("В меню", callback_data='Назад')]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -161,7 +161,7 @@ def wait_email(update, context):
         return Handlers.WAITING_MAIL
 
 
-def token_checker(bot_data):
+def update_token(bot_data):
     token_creation_time = bot_data['token_creation_time']
     time_is_now = datetime.datetime.now()
     time_interval = time_is_now - token_creation_time
@@ -175,7 +175,7 @@ def token_checker(bot_data):
 
 
 def start(update, context):
-    context.bot_data['moltin_token'] = token_checker(context.bot_data)
+    context.bot_data['moltin_token'] = update_token(context.bot_data)
 
     moltin_token = context.bot_data['moltin_token']
 
